@@ -42,45 +42,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
-        			<groupId>com.spotify</groupId>
-             			<artifactId>dockerfile-maven-plugin</artifactId>
-             			<version>1.4.3</version>
-             			<executions>
-                 			<execution>
-                     				<id>default</id>
-                     				<goals>
-                         				<goal>build</goal>
-                     				</goals>
-                 			</execution>
-					<execution>
-						<id>tag-image-version</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>tag</goal>
-						</goals>
-						<configuration>
-							<image>${project.artifactId}</image>
-							<newName>abhinav.azurecr.io/${project.artifactId}:${project.version}</newName>
-							<pushImage>true</pushImage>
-						</configuration>
-					</execution>
-					<execution>
-						<id>tag-image-latest</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>tag</goal>
-						</goals>
-						<configuration>
-							<image>${project.artifactId}</image>
-							<newName>abhinav.azurecr.io/${project.artifactId}:latest</newName>
-							<pushImage>true</pushImage>
-						</configuration>
-					</execution>
-             				</executions>
-         		</plugin>
 		</plugins>
 	</build>
 	
-
 </project>
