@@ -10,7 +10,7 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  imageName: 'spring-demo:$(build.buildId)'
+  imageName: 'spring-demo'
 
 steps:
 - task: Maven@3
@@ -25,6 +25,7 @@ steps:
     goals: 'package -DskipTests'  
 
 - script: |
-    docker build -t $(dockerId).azurecr.io/${imageName} .
+    docker build -t $(dockerId).azurecr.io/$(imageName) .
+    docker tag $(dockerId).azurecr.io/$(imageName) $(dockerId).azurecr.io/$(imageName):$(build.buildId)
     docker login -u $(dockerId) -p $(pswd) $(dockerId).azurecr.io
-    docker push $(dockerId).azurecr.io/${imageName}
+    docker push $(dockerId).azurecr.io/$(imageName)
