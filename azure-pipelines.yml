@@ -23,6 +23,11 @@ steps:
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
     goals: 'package -DskipTests'  
+    codeCoverageToolOption: JaCoCo
+    sonarQubeRunAnalysis: true
+    checkStyleRunAnalysis: true
+    pmdRunAnalysis: true
+    findBugsRunAnalysis: true
 
 - script: |
     docker build -t $(dockerId).azurecr.io/$(imageName) .
