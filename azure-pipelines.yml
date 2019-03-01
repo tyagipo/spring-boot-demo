@@ -6,31 +6,64 @@
 trigger:
 - master
 
+resources:
+    -
+        repo: self
 pool:
-  vmImage: 'Ubuntu-16.04'
-
-variables:
-  imageName: 'spring-demo'
-
+    vmImage: 'Hosted Ubuntu 1604'
+    demands:
+        - maven
+        - java
 steps:
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: false
-    testResultsFiles: '**/TEST-*.xml'
-    goals: 'package -DskipTests'  
-    codeCoverageToolOption: JaCoCo
-    sonarQubeRunAnalysis: true
-    checkStyleRunAnalysis: true
-    pmdRunAnalysis: true
-    findBugsRunAnalysis: true
-
-- script: |
-    docker build -t $(dockerId).azurecr.io/$(imageName) .
-    docker tag $(dockerId).azurecr.io/$(imageName) $(dockerId).azurecr.io/$(imageName):$(build.buildId)
-    docker login -u $(dockerId) -p $(pswd) $(dockerId).azurecr.io
-    docker push $(dockerId).azurecr.io/$(imageName)
+    -
+        task: Maven@3
+        displayName: 'Maven pom.xml'
+        inputs:
+            mavenPomFile: $(Parameters.mavenPOMFile)
+            goals: 'package'
+    -
+        task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
+        displayName: 'Prepare analysis on SonarCloud'
+        inputs:
+            SonarCloud: SonarCloud
+            organization: abhinavsinha1991-github
+            scannerMode: CLI
+            configMode: manual
+            cliProjectKey: spring-boot-demo
+            cliSources: src
+            extraProperties: "sonar.java.binaries=target\n"
+    -
+        task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
+        displayName: 'Run Code Analysis'
+    -
+        task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
+        displayName: 'Publish Quality Gate Result'
+    -
+        task: Docker@1
+        displayName: 'Build image'
+        inputs:
+            azureSubscriptionEndpoint: 'Free Trial (ddb00b26-aaa4-4b57-ab3b-8f318b8d8aa4)'
+            azureContainerRegistry: sinhaabhinav1991.azurecr.io
+            dockerFile: Dockerfile
+            includeLatestTag: true
+            addDefaultLabels: false
+        condition: 'and(succeeded(), eq(variables[''Build.SourceBranch''], ''refs/heads/master''))'
+        env:
+            imageName: spring-demo
+    -
+        task: Docker@1
+        displayName: 'Docker login to ACR'
+        inputs:
+            azureSubscriptionEndpoint: 'Free Trial (ddb00b26-aaa4-4b57-ab3b-8f318b8d8aa4)'
+            azureContainerRegistry: sinhaabhinav1991.azurecr.io
+            command: login
+        condition: 'and(succeeded(), eq(variables[''Build.SourceBranch''], ''refs/heads/master''))'
+    -
+        task: Docker@1
+        displayName: 'Push an image'
+        inputs:
+            azureSubscriptionEndpoint: 'Free Trial (ddb00b26-aaa4-4b57-ab3b-8f318b8d8aa4)'
+            azureContainerRegistry: sinhaabhinav1991.azurecr.io
+            command: 'Push an image'
+            imageName: $(Build.Repository.Name)
+        condition: 'and(succeeded(), eq(variables[''Build.SourceBranch''], ''refs/heads/master''))'
