@@ -1,5 +1,6 @@
 package com.example;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -11,7 +12,7 @@ public class SpringBootDemoApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		int a=1;
+		Assert.assertTrue(0==0);
 	}
 
 }
