@@ -11,7 +11,7 @@ public class SpringBootDemoApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		1+1;
+		int a=1;
 	}
 
 }
