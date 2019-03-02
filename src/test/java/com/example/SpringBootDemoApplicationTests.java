@@ -12,7 +12,7 @@ public class SpringBootDemoApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		Assert.assertTrue(0==0);
+		Assert.assertTrue(0!=1);
 	}
 
 }
