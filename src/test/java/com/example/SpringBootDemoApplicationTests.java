@@ -3,17 +3,20 @@ package com.example;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = SpringBootDemoApplication.class)
+@RunWith(SpringRunner.class)
 public class SpringBootDemoApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		//Dummy test
-		Assert.assertTrue(0!=1);
+		SpringBootDemoApplication.main( new String[]{} );
+	}
+
+	@Test
+	public void controllerTest() {
+		HelloController helloController=new HelloController();
+		Assert.assertEquals( helloController.index(),"Greetings from Spring Boot on Azure!!!");
 	}
 
 }
