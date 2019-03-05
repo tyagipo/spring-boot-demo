@@ -12,6 +12,7 @@ public class SpringBootDemoApplicationTests {
 
 	@Test
 	public void contextLoads() {
+		//Dummy test
 		Assert.assertTrue(0!=1);
 	}
 
